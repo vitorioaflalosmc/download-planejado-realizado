@@ -8,11 +8,13 @@ from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill, Border, Side
+import config
+
 
 # Função para configurar o driver
 def configurar_driver():
     edge_options = Options()
-    edge_service = EdgeService(executable_path="C:/Users/vitorio.aflalo/Desktop/Automacoes/scripts-python/webdriver/msedgedriver.exe")
+    edge_service = EdgeService(executable_path=config.EDGE_DRIVER_PATH)
     driver = webdriver.Edge(service=edge_service, options=edge_options)
     driver.maximize_window()
     return driver
@@ -112,6 +114,6 @@ def baixar_formatar_arquivo_indicadores(username, password):
         print("Nenhum arquivo CSV encontrado na pasta de Downloads.")
 
 if __name__ == "__main__":
-    username = 'vitorio.aflalo'
-    password = 'smc@2024'
+    username = config.USERNAME
+    password = config.PASSWORD
     baixar_formatar_arquivo_indicadores(username, password)

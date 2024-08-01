@@ -8,11 +8,12 @@ from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill, Border, Side
+import config
 
 # Função para configurar o driver
 def configurar_driver():
     edge_options = Options()
-    edge_service = EdgeService(executable_path="C:/Users/vitorio.aflalo/Desktop/Automacoes/scripts-python/webdriver/msedgedriver.exe")
+    edge_service = EdgeService(executable_path=config.EDGE_DRIVER_PATH)
     driver = webdriver.Edge(service=edge_service, options=edge_options)
     driver.maximize_window()
     return driver
@@ -114,8 +115,8 @@ def renomear_formatar_arquivo():
 # Função principal
 def tarefa():
     driver = configurar_driver()
-    realizar_login(driver, 'vitorio.aflalo', 'smc@2024')
-    navegar_painel(driver, 'vitorio.aflalo', 'smc@2024')
+    realizar_login(driver, config.USERNAME, config.PASSWORD)
+    navegar_painel(driver, config.USERNAME, config.PASSWORD)
     time.sleep(5)
     driver.quit()
     renomear_formatar_arquivo()
