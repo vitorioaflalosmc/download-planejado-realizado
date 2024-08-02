@@ -30,3 +30,5 @@ Como fazemos acesso ao SPM, é importante que suas credenciais (login e senha) e
 ## Manipulação no Excel
 
 - Os arquivos "Realizado" e "Planejado" incluem uma nova coluna chamada "AREA2", que é o resultado da concatenação das colunas "AREA" e "ID".
+- Os arquivos "Realizado" e "Planejado" possuem uma coluna "STATUS2", "puxando" as informaçoes do "Realizado"/"Planejado" anterior, através de um procv
+- Os arquivos "Realizado" e "Planejado" tem a coluna "Data_Hora" divididas em duas: "Data" e "Hora"
