@@ -88,14 +88,13 @@ def renomear_formatar_arquivo():
             if 'AREA2' in df_antiga.columns and 'STATUS2' in df_antiga.columns:
                 # Garantir que 'AREA2' está no tipo correto
                 df_antiga['AREA2'] = df_antiga['AREA2'].astype(str)
-                df['STATUS2'] = df['AREA2'].map(df_antiga.set_index('AREA2')['STATUS2']).fillna('N/A')
+                df['STATUS2'] = df['AREA2'].map(df_antiga.set_index('AREA2')['STATUS2']).fillna('#N/D')
                 print(f"Arquivo mais recente encontrado: {segundo_mais_recente}")
             else:
                 print("Colunas 'AREA2' ou 'STATUS2' não encontradas em df_antiga.")
                 # Verificar colunas disponíveis em df_antiga
                 print(f"Arquivo mais recente encontrado: {segundo_mais_recente}")
                 print(f"Colunas disponíveis em df_antiga: {df_antiga.columns}")
-
         # Substituir todas as células vazias por 'N/A'
         df = df.fillna('N/A')
 
