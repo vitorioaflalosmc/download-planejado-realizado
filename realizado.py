@@ -67,7 +67,7 @@ def renomear_formatar_arquivo():
         # Caminho para salvar o arquivo Excel
         data_atual = datetime.now().strftime("%d.%m")
         novo_nome = f"Realizado - {data_atual}.xlsx"
-        destino = f"H:/Monitoramento_e_Avaliacao/Relatórios de Metas/Mensal/Realizado/2024/{novo_nome}"
+        destino = f"H:/Monitoramento_e_Avaliacao/Relatórios de Metas/Mensal/Realizado/2024/teste/{novo_nome}"
         
         # Carregar o CSV em um DataFrame
         df = pd.read_csv(arquivo_recente, delimiter=";")  # Ajuste o delimitador conforme necessário
@@ -76,11 +76,12 @@ def renomear_formatar_arquivo():
         if 'AREA' in df.columns and 'ID' in df.columns:
             df['AREA2'] = df['AREA'].astype(str) + '-' + df['ID'].astype(str)
         # Verificar e converter a coluna 'Data_Hora' para o tipo datetime
+        # Verificar e converter a coluna 'Data_Hora' para o tipo datetime
         if 'Data_Hora' in df.columns:
             df['Data_Hora'] = pd.to_datetime(df['Data_Hora'], errors='coerce')
 
             # Criar as colunas 'Data' e 'Hora' a partir da coluna 'Data_Hora'
-            df['Data'] = df['Data_Hora'].dt.strftime('%d/%m/%Y')  # Formatar data para o padrão brasileiro
+            df['Data'] = df['Data_Hora'].dt.date  # Mantém como datetime.date
             df['Hora'] = df['Data_Hora'].dt.time
 
             # Excluir a coluna original 'Data_Hora'

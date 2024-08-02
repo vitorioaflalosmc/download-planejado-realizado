@@ -81,7 +81,7 @@ def renomear_formatar_arquivo():
             df['Data_Hora'] = pd.to_datetime(df['Data_Hora'], errors='coerce')
 
             # Criar as colunas 'Data' e 'Hora' a partir da coluna 'Data_Hora'
-            df['Data'] = df['Data_Hora'].dt.strftime('%d/%m/%Y')  # Formatar data para o padrão brasileiro
+            df['Data'] = df['Data_Hora'].dt.date  # Mantém como datetime.date
             df['Hora'] = df['Data_Hora'].dt.time
 
             # Excluir a coluna original 'Data_Hora'
