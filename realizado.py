@@ -75,7 +75,22 @@ def renomear_formatar_arquivo():
         # Criar a coluna 'AREA2'
         if 'AREA' in df.columns and 'ID' in df.columns:
             df['AREA2'] = df['AREA'].astype(str) + '-' + df['ID'].astype(str)
+        # Verificar e converter a coluna 'Data_Hora' para o tipo datetime
+        if 'Data_Hora' in df.columns:
+            df['Data_Hora'] = pd.to_datetime(df['Data_Hora'], errors='coerce')
 
+            # Criar as colunas 'Data' e 'Hora' a partir da coluna 'Data_Hora'
+            df['Data'] = df['Data_Hora'].dt.strftime('%d/%m/%Y')  # Formatar data para o padrão brasileiro
+            df['Hora'] = df['Data_Hora'].dt.time
+
+            # Excluir a coluna original 'Data_Hora'
+            df.drop(columns=['Data_Hora'], inplace=True)
+
+            # Reposicionar as colunas 'Data' e 'Hora'
+            colunas = list(df.columns)
+            colunas.insert(6, colunas.pop(colunas.index('Data')))
+            colunas.insert(7, colunas.pop(colunas.index('Hora')))
+            df = df[colunas]
         # Identificar o segundo arquivo Excel mais recente na pasta de destino
         arquivos_excel = [os.path.join(os.path.dirname(destino), f) for f in os.listdir(os.path.dirname(destino)) if f.endswith('.xlsx')]
         if len(arquivos_excel) >= 2:
