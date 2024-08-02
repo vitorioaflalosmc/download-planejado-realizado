@@ -40,7 +40,6 @@ def navegar_painel(driver, username, password):
     time.sleep(3)
     driver.find_element(By.XPATH, '/html/body/nav/button[5]').click()
 
-
 # Função para adicionar bordas
 def adicionar_bordas(sheet):
     thin_border = Border(
@@ -54,16 +53,16 @@ def adicionar_bordas(sheet):
         for cell in row:
             cell.border = thin_border
 
-# Função para renomear, formatar e adicionar a coluna 'AREA2'
+# Função para renomear, formatar e adicionar as colunas 'AREA2' e 'STATUS2'
 def renomear_formatar_arquivo():
     # Pasta de downloads (padrão)
     download_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
     arquivos = os.listdir(download_dir)
 
-    # Encontrar o arquivo mais recente
-    arquivos = [os.path.join(download_dir, f) for f in arquivos if f.endswith('.csv')]
-    if arquivos:
-        arquivo_recente = max(arquivos, key=os.path.getctime)
+    # Encontrar o arquivo CSV mais recente
+    arquivos_csv = [os.path.join(download_dir, f) for f in arquivos if f.endswith('.csv')]
+    if arquivos_csv:
+        arquivo_recente = max(arquivos_csv, key=os.path.getctime)
 
         # Caminho para salvar o arquivo Excel
         data_atual = datetime.now().strftime("%d.%m")
@@ -76,7 +75,30 @@ def renomear_formatar_arquivo():
         # Criar a coluna 'AREA2'
         if 'AREA' in df.columns and 'ID' in df.columns:
             df['AREA2'] = df['AREA'].astype(str) + '-' + df['ID'].astype(str)
-        
+
+        # Identificar o segundo arquivo Excel mais recente na pasta de destino
+        arquivos_excel = [os.path.join(os.path.dirname(destino), f) for f in os.listdir(os.path.dirname(destino)) if f.endswith('.xlsx')]
+        if len(arquivos_excel) >= 2:
+            arquivos_excel.sort(key=os.path.getctime, reverse=True)
+            caminho_excel_antigo = arquivos_excel[0]  # Segundo mais recente
+
+            # Carregar o arquivo Excel para comparação
+            df_antigo = pd.read_excel(caminho_excel_antigo)
+
+            # Criar a coluna 'AREA2' no DataFrame antigo, se necessário
+            if 'AREA' in df_antigo.columns and 'ID' in df_antigo.columns:
+                df_antigo['AREA2'] = df_antigo['AREA'].astype(str) + '-' + df_antigo['ID'].astype(str)
+            if 'CHECAGEM' in df_antigo.columns:
+                # Criar uma nova coluna 'STATUS2' na nova planilha com base na correspondência de 'AREA2'
+                df['STATUS2'] = df['AREA2'].map(df_antigo.set_index('AREA2')['CHECAGEM']).fillna('#N/D')
+            else:
+                print("Coluna 'CHECAGEM' não encontrada em df_antiga.")
+                # Verificar colunas disponíveis em df_antiga
+                print(f"Arquivo mais recente encontrado: {caminho_excel_antigo}")
+                print(f"Colunas disponíveis em df_antiga: {df_antigo.columns}")
+        # Substituir todas as células vazias por 'N/A'
+        df = df.fillna('N/A')
+
         # Salvar como Excel
         df.to_excel(destino, index=False)
         

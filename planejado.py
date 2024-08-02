@@ -10,7 +10,6 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill, Border, Side
 import config
 
-
 # Função para configurar o driver
 def configurar_driver():
     edge_options = Options() 
@@ -40,7 +39,6 @@ def navegar_painel(driver, username, password):
     driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/button').click()
     time.sleep(3)
     driver.find_element(By.XPATH, '/html/body/nav/button[4]').click()
-
 
 # Função para adicionar bordas
 def adicionar_bordas(sheet):
@@ -77,7 +75,30 @@ def renomear_formatar_arquivo():
         # Criar a coluna 'AREA2'
         if 'AREA' in df.columns and 'ID' in df.columns:
             df['AREA2'] = df['AREA'].astype(str) + '-' + df['ID'].astype(str)
-        
+
+        # Identificar a segunda planilha mais recente na pasta de destino
+        arquivos_excel = [os.path.join(os.path.dirname(destino), f) for f in os.listdir(os.path.dirname(destino)) if f.endswith('.xlsx')]
+        if len(arquivos_excel) > 1:
+            # Ordenar arquivos por data de criação e selecionar o segundo mais recente
+            arquivos_excel.sort(key=os.path.getctime, reverse=True)
+            segundo_mais_recente = arquivos_excel[0]
+            df_antiga = pd.read_excel(segundo_mais_recente)
+
+            # Criar a coluna 'STATUS2' e realizar o PROC V
+            if 'AREA2' in df_antiga.columns and 'STATUS2' in df_antiga.columns:
+                # Garantir que 'AREA2' está no tipo correto
+                df_antiga['AREA2'] = df_antiga['AREA2'].astype(str)
+                df['STATUS2'] = df['AREA2'].map(df_antiga.set_index('AREA2')['STATUS2']).fillna('N/A')
+                print(f"Arquivo mais recente encontrado: {segundo_mais_recente}")
+            else:
+                print("Colunas 'AREA2' ou 'STATUS2' não encontradas em df_antiga.")
+                # Verificar colunas disponíveis em df_antiga
+                print(f"Arquivo mais recente encontrado: {segundo_mais_recente}")
+                print(f"Colunas disponíveis em df_antiga: {df_antiga.columns}")
+
+        # Substituir todas as células vazias por 'N/A'
+        df = df.fillna('N/A')
+
         # Salvar como Excel
         df.to_excel(destino, index=False)
         
