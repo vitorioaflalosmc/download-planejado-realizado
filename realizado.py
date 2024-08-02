@@ -67,7 +67,7 @@ def renomear_formatar_arquivo():
         # Caminho para salvar o arquivo Excel
         data_atual = datetime.now().strftime("%d.%m")
         novo_nome = f"Realizado - {data_atual}.xlsx"
-        destino = f"H:/Monitoramento_e_Avaliacao/Relatórios de Metas/Mensal/Realizado/2024/teste/{novo_nome}"
+        destino = f"H:/Monitoramento_e_Avaliacao/Relatórios de Metas/Mensal/Realizado/2024/{novo_nome}"
         
         # Carregar o CSV em um DataFrame
         df = pd.read_csv(arquivo_recente, delimiter=";")  # Ajuste o delimitador conforme necessário
