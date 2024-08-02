@@ -27,8 +27,9 @@ Cada arquivo é projetado para realizar operações específicas, dependendo do 
 ## Atenção
 Como fazemos acesso ao SPM, é importante que suas credenciais (login e senha) estejam disponíveis no código, para que o Python possa acessar o sistema com seu acesso. Depois de clonar o projeto, você deve inseri-las em no arquivo config.py, em USERNAME e PASSWORD. 
 
-## Manipulação no Excel
+## Manipulação na planilha
 
 - Os arquivos "Realizado" e "Planejado" incluem uma nova coluna chamada "AREA2", que é o resultado da concatenação das colunas "AREA" e "ID".
-- Os arquivos "Realizado" e "Planejado" possuem uma coluna "STATUS2", "puxando" as informaçoes do "Realizado"/"Planejado" anterior, através de um procv
-- Os arquivos "Realizado" e "Planejado" tem a coluna "Data_Hora" divididas em duas: "Data" e "Hora"
+- Os arquivos "Realizado" e "Planejado" incluem uma nova coluna chamada "STATUS2", indicando os status de cada registro, realizando o procv com a planilha anterior de correspondência.
+- A coluna "Data_Hora" é separada em outras duas: "Data" e "Hora"
+
