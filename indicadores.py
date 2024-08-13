@@ -10,7 +10,6 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill, Border, Side
 import config
 
-
 # Função para configurar o driver
 def configurar_driver():
     edge_options = Options()
@@ -40,8 +39,15 @@ def navegar_painel(driver, username, password):
     driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/button').click()
     time.sleep(3)
 
+# Função para tentar converter valores para float
+def tentar_converter_para_float(valor):
+    try:
+        return float(valor)
+    except ValueError:
+        return valor
+
 # Função para baixar e formatar o arquivo de indicadores
-def baixar_formatar_arquivo_indicadores(username, password):
+def baixar_formatar_arquivo_indicadores(username, password, meses):
     driver = configurar_driver()
     realizar_login(driver, username, password)
     navegar_painel(driver, username, password)
@@ -70,6 +76,19 @@ def baixar_formatar_arquivo_indicadores(username, password):
         
         # Carregar o CSV em um DataFrame
         df = pd.read_csv(arquivo_recente, delimiter=";")
+
+        # Remover a coluna 'planejado'
+        if 'planejado' in df.columns:
+            df = df.drop(columns=['planejado'])
+
+        # Filtrar os meses escolhidos
+        df = df[df['mes'].isin(meses)]
+
+        # Tentar converter a coluna 'realizado' para float
+        df['realizado'] = df['realizado'].apply(tentar_converter_para_float)
+
+        # Excluir linhas onde 'realizado' vale 0, garantindo que é um float
+        df = df[~((df['realizado'] == 0) & (df['realizado'].apply(lambda x: isinstance(x, float))))]
 
         # Salvar como Excel
         df.to_excel(destino, index=False)
@@ -116,4 +135,5 @@ def baixar_formatar_arquivo_indicadores(username, password):
 if __name__ == "__main__":
     username = config.USERNAME
     password = config.PASSWORD
-    baixar_formatar_arquivo_indicadores(username, password)
+    meses_desejados = ['JUL', 'AGO']  # Exemplo de como escolher os meses
+    baixar_formatar_arquivo_indicadores(username, password, meses_desejados)

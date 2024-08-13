@@ -75,7 +75,7 @@ def renomear_formatar_arquivo():
         # Criar a coluna 'AREA2'
         if 'AREA' in df.columns and 'ID' in df.columns:
             df['AREA2'] = df['AREA'].astype(str) + '-' + df['ID'].astype(str)
-        # Verificar e converter a coluna 'Data_Hora' para o tipo datetime
+        
         # Verificar e converter a coluna 'Data_Hora' para o tipo datetime
         if 'Data_Hora' in df.columns:
             df['Data_Hora'] = pd.to_datetime(df['Data_Hora'], errors='coerce')
@@ -92,6 +92,7 @@ def renomear_formatar_arquivo():
             colunas.insert(6, colunas.pop(colunas.index('Data')))
             colunas.insert(7, colunas.pop(colunas.index('Hora')))
             df = df[colunas]
+
         # Identificar o segundo arquivo Excel mais recente na pasta de destino
         arquivos_excel = [os.path.join(os.path.dirname(destino), f) for f in os.listdir(os.path.dirname(destino)) if f.endswith('.xlsx')]
         if len(arquivos_excel) >= 2:
@@ -104,14 +105,26 @@ def renomear_formatar_arquivo():
             # Criar a coluna 'AREA2' no DataFrame antigo, se necessário
             if 'AREA' in df_antigo.columns and 'ID' in df_antigo.columns:
                 df_antigo['AREA2'] = df_antigo['AREA'].astype(str) + '-' + df_antigo['ID'].astype(str)
-            if 'CHECAGEM' in df_antigo.columns:
-                # Criar uma nova coluna 'STATUS2' na nova planilha com base na correspondência de 'AREA2'
-                df['STATUS2'] = df['AREA2'].map(df_antigo.set_index('AREA2')['CHECAGEM']).fillna('#N/D')
-            else:
-                print("Coluna 'CHECAGEM' não encontrada em df_antiga.")
-                # Verificar colunas disponíveis em df_antiga
-                print(f"Arquivo mais recente encontrado: {caminho_excel_antigo}")
-                print(f"Colunas disponíveis em df_antiga: {df_antigo.columns}")
+            
+            # Verificar e exibir os valores repetidos na coluna 'AREA2' do df_antigo
+            valores_repetidos_df_antigo = df_antigo['AREA2'][df_antigo['AREA2'].duplicated(keep=False)]
+
+            if not valores_repetidos_df_antigo.empty:
+                print("Valores repetidos na coluna 'AREA2' do df_antigo:")
+                print(valores_repetidos_df_antigo)
+
+            # Diagnosticar a operação map diretamente
+            try:
+                df['STATUS2'] = df['AREA2'].map(df_antigo.set_index('AREA2')['STATUS2']).fillna('#N/D')
+                print("Mapeamento realizado com sucesso.")
+            except Exception as e:
+                print(f"Erro durante o mapeamento: {e}")
+        else:
+            print("Coluna 'STATUS2' não encontrada em df_antiga.")
+            # Verificar colunas disponíveis em df_antiga
+            print(f"Arquivo mais recente encontrado: {caminho_excel_antigo}")
+            print(f"Colunas disponíveis em df_antiga: {df_antigo.columns}")
+
         # Substituir todas as células vazias por 'N/A'
         df = df.fillna('N/A')
 
@@ -149,6 +162,7 @@ def renomear_formatar_arquivo():
         print(f"Arquivo renomeado, formatado e movido para: {destino}")
     else:
         print("Nenhum arquivo CSV encontrado na pasta de Downloads.")
+
 
 # Função principal
 def tarefa():
