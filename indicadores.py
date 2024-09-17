@@ -26,13 +26,13 @@ def realizar_login(driver, username, password):
     driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[2]/div/form/div/div[1]/div[5]/button').click()
     time.sleep(3)
 
-# Função para navegação e ações no painel
+# Função para navegar e realizar ações
 def navegar_painel(driver, username, password):
     driver.find_element(By.XPATH, '/html/body/div[2]/header/div/div[2]/ul/li[1]/a/span').click()
     time.sleep(2)
     driver.find_element(By.XPATH, '/html/body/div[2]/header/div/div[2]/ul/li[1]/div/div/div[2]/a[5]').click()
     time.sleep(2)
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div/main/table/tbody/tr[2]/td/a/button').click()
+    driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div/main/table/tbody/tr[2]/td/div[1]/a').click()
     time.sleep(3)
     driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[1]/input').send_keys(username)
     driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[2]/input').send_keys(password)
@@ -47,7 +47,7 @@ def tentar_converter_para_float(valor):
         return valor
 
 # Função para baixar e formatar o arquivo de indicadores
-def baixar_formatar_arquivo_indicadores(username, password, meses):
+def baixar_formatar_arquivo_indicadores(username, password):
     driver = configurar_driver()
     realizar_login(driver, username, password)
     navegar_painel(driver, username, password)
@@ -80,9 +80,6 @@ def baixar_formatar_arquivo_indicadores(username, password, meses):
         # Remover a coluna 'planejado'
         if 'planejado' in df.columns:
             df = df.drop(columns=['planejado'])
-
-        # Filtrar os meses escolhidos
-        df = df[df['mes'].isin(meses)]
 
         # Tentar converter a coluna 'realizado' para float
         df['realizado'] = df['realizado'].apply(tentar_converter_para_float)
@@ -135,5 +132,4 @@ def baixar_formatar_arquivo_indicadores(username, password, meses):
 if __name__ == "__main__":
     username = config.USERNAME
     password = config.PASSWORD
-    meses_desejados = ['JUL', 'AGO']  # Exemplo de como escolher os meses
-    baixar_formatar_arquivo_indicadores(username, password, meses_desejados)
+    baixar_formatar_arquivo_indicadores(username, password)

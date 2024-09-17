@@ -35,7 +35,7 @@ def navegar_painel(driver, username, password):
     time.sleep(2)
     driver.find_element(By.XPATH, '/html/body/div[2]/header/div/div[2]/ul/li[1]/div/div/div[2]/a[5]').click()
     time.sleep(2)
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div/main/table/tbody/tr[2]/td/a/button').click()
+    driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div/main/table/tbody/tr[2]/td/div[1]/a').click()
     time.sleep(3)
     driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[1]/input').send_keys(username)
     driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[2]/input').send_keys(password)
@@ -71,7 +71,6 @@ def renomear_formatar_arquivo():
         data_atual = datetime.now().strftime("%d.%m")
         novo_nome = f"Realizado - {data_atual}.xlsx"
         destino = f"H:/Monitoramento_e_Avaliacao/Relatórios de Metas/Mensal/Realizado/2024/{novo_nome}"
-        
         # Carregar o CSV em um DataFrame
         df = pd.read_csv(arquivo_recente, delimiter=";")  # Ajuste o delimitador conforme necessário
 
@@ -100,15 +99,15 @@ def renomear_formatar_arquivo():
         arquivos_excel = [os.path.join(os.path.dirname(destino), f) for f in os.listdir(os.path.dirname(destino)) if f.endswith('.xlsx')]
         if len(arquivos_excel) >= 2:
             arquivos_excel.sort(key=os.path.getctime, reverse=True)
-            caminho_excel_antigo = arquivos_excel[0]  # Segundo mais recente
-
+            caminho_excel_antigo = arquivos_excel[0]
+            print(f'Esse é o caminho do arquivo que está sendo analisado: {caminho_excel_antigo}')
             # Carregar o arquivo Excel para comparação
             df_antigo = pd.read_excel(caminho_excel_antigo)
 
             # Criar a coluna 'AREA2' no DataFrame antigo, se necessário
             if 'AREA' in df_antigo.columns and 'ID' in df_antigo.columns:
                 df_antigo['AREA2'] = df_antigo['AREA'].astype(str) + '-' + df_antigo['ID'].astype(str)
-            
+                print('criei area2')
             # Verificar e exibir os valores repetidos na coluna 'AREA2' do df_antigo
             valores_repetidos_df_antigo = df_antigo['AREA2'][df_antigo['AREA2'].duplicated(keep=False)]
 
