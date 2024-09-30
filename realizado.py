@@ -8,7 +8,6 @@ from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 from openpyxl import load_workbook
 from openpyxl.styles import Font, Border, Side, PatternFill
-from openpyxl.utils import get_column_letter
 import os
 from datetime import datetime
 import config
