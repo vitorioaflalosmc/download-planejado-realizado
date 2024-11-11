@@ -78,11 +78,12 @@ def renomear_formatar_arquivo():
             df['AREA2'] = df['AREA'].astype(str) + '-' + df['ID'].astype(str)
         
         # Verificar e converter a coluna 'Data_Hora' para o tipo datetime
+# Verificar e converter a coluna 'Data_Hora' para o tipo datetime
         if 'Data_Hora' in df.columns:
             df['Data_Hora'] = pd.to_datetime(df['Data_Hora'], errors='coerce')
 
             # Criar as colunas 'Data' e 'Hora' a partir da coluna 'Data_Hora'
-            df['Data'] = df['Data_Hora'].dt.date  # Mantém como datetime.date
+            df['Data'] = df['Data_Hora'].dt.date  # Formatar no estilo DD/MM/YYYY
             df['Hora'] = df['Data_Hora'].dt.time
 
             # Excluir a coluna original 'Data_Hora'
