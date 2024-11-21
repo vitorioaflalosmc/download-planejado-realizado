@@ -93,6 +93,7 @@ def renomear_formatar_arquivo():
             colunas = list(df.columns)
             colunas.insert(6, colunas.pop(colunas.index('Data')))
             colunas.insert(7, colunas.pop(colunas.index('Hora')))
+            colunas.insert(2, colunas.pop(colunas.index('AREA')))
             df = df[colunas]
 
         # Identificar o segundo arquivo Excel mais recente na pasta de destino

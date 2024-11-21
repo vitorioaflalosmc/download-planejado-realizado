@@ -89,6 +89,7 @@ def renomear_formatar_arquivo():
             colunas = list(df.columns)
             colunas.insert(6, colunas.pop(colunas.index('Data')))
             colunas.insert(7, colunas.pop(colunas.index('Hora')))
+            colunas.insert(2, colunas.pop(colunas.index('AREA')))
             df = df[colunas]
         # Identificar a segunda planilha mais recente na pasta de destino
         arquivos_excel = [os.path.join(os.path.dirname(destino), f) for f in os.listdir(os.path.dirname(destino)) if f.endswith('.xlsx')]
