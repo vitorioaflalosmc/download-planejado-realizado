@@ -1,124 +1,161 @@
-import os  # Importa o módulo os para interagir com o sistema de arquivos
-import time  # Importa o módulo time para manipular o tempo, como pausas no código
-from datetime import datetime  # Importa o módulo datetime para manipulação de data e hora
-import pandas as pd  # Importa a biblioteca pandas para manipulação de dados em tabelas (DataFrames)
-from selenium import webdriver  # Importa a biblioteca webdriver do Selenium para controle do navegador
-from selenium.webdriver.edge.service import Service as EdgeService  # Importa a classe Service para controlar o serviço do navegador Edge
-from selenium.webdriver.edge.options import Options  # Importa a classe Options para configurar opções do navegador Edge
-from selenium.webdriver.common.by import By  # Importa a classe By para selecionar elementos no DOM via diferentes métodos
-from openpyxl import load_workbook  # Importa a função load_workbook do openpyxl para carregar arquivos Excel
-from openpyxl.styles import Font, PatternFill, Border, Side  # Importa classes para aplicar estilos no Excel
-import config  # Importa o arquivo de configurações para acessar credenciais e caminhos do sistema
+import os
+import time
+from datetime import datetime
+import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.edge.service import Service as EdgeService
+from selenium.webdriver.edge.options import Options
+from selenium.webdriver.common.by import By
+from openpyxl import load_workbook
+from openpyxl.styles import Font, PatternFill, Border, Side
+import config
 
-# Função para configurar o driver do navegador
+# Função para configurar o driver
 def configurar_driver():
-    edge_options = Options()  # Cria uma instância de opções para o navegador Edge
-    edge_service = EdgeService(executable_path=config.EDGE_DRIVER_PATH)  # Configura o caminho do driver do Edge a partir do arquivo de configurações
-    driver = webdriver.Edge(service=edge_service, options=edge_options)  # Inicializa o driver do navegador Edge com as opções e serviço configurados
-    driver.maximize_window()  # Maximiza a janela do navegador
-    return driver  # Retorna o driver configurado
+    edge_options = Options() 
+    edge_service = EdgeService(executable_path=config.EDGE_DRIVER_PATH)
+    driver = webdriver.Edge(service=edge_service, options=edge_options)
+    driver.maximize_window()
+    return driver
 
-# Função para realizar o login no sistema
+# Função para realizar o login
 def realizar_login(driver, username, password):
-    driver.get('https://suporte.santamarcelinacultura.org.br/planejamento/front/central.php')  # Acessa a URL do sistema de login
-    driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[2]/div/form/div/div[1]/div[2]/input').send_keys(username)  # Preenche o campo de usuário
-    driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[2]/div/form/div/div[1]/div[3]/input').send_keys(password)  # Preenche o campo de senha
-    driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[2]/div/form/div/div[1]/div[5]/button').click()  # Clica no botão de login
-    time.sleep(3)  # Aguarda 3 segundos para o login ser processado
+    driver.get('https://suporte.santamarcelinacultura.org.br/planejamento/front/central.php')
+    driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[2]/div/form/div/div[1]/div[2]/input').send_keys(username)
+    driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[2]/div/form/div/div[1]/div[3]/input').send_keys(password)
+    driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[2]/div/form/div/div[1]/div[5]/button').click()
+    time.sleep(3)
 
-# Função para navegar até o painel e realizar ações
+# Função para navegar e realizar ações
 def navegar_painel(driver, username, password):
-    driver.find_element(By.XPATH, '/html/body/div[2]/header/div/div[2]/ul/li[1]/a/span').click()  # Clica em ativos
-    time.sleep(2)  # Aguarda 2 segundos
-    driver.find_element(By.XPATH, '/html/body/div[2]/header/div/div[2]/ul/li[1]/div/div/div[2]/a[5]').click()  # clica em painel
-    time.sleep(2)  # Aguarda 2 segundos
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div/main/table/tbody/tr[2]/td/div[1]/a').click()  # Clica em acessar painel
-    time.sleep(3)  # Aguarda 3 segundos
-    driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[1]/input').send_keys(username)  # Preenche o campo de usuário
-    driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[2]/input').send_keys(password)  # Preenche o campo de senha
-    driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/button').click()  # Clica para autenticar novamente
-    time.sleep(3)  # Aguarda 3 segundos
-    driver.find_element(By.XPATH, '/html/body/nav/button[4]').click()  # Clica em um botão para avançar no processo
+    driver.find_element(By.XPATH, '/html/body/div[2]/header/div/div[2]/ul/li[1]/a/span').click()
+    time.sleep(2)
+    driver.find_element(By.XPATH, '/html/body/div[2]/header/div/div[2]/ul/li[1]/div/div/div[2]/a[5]').click()
+    time.sleep(2)
+    driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div/main/table/tbody/tr[2]/td/div[1]/a').click()
+    time.sleep(3)
+    driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[1]/input').send_keys(username)
+    driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[2]/input').send_keys(password)
+    driver.find_element(By.XPATH, '/html/body/div/div/div[2]/form/button').click()
+    time.sleep(3)
+    driver.find_element(By.XPATH, '/html/body/nav/button[4]').click()
 
-# Função para adicionar bordas em todas as células de uma planilha
+# Função para adicionar bordas
 def adicionar_bordas(sheet):
-    thin_border = Border(  # Cria uma borda fina para as células
-        left=Side(border_style="thin", color="000000"),  # Define a borda esquerda
-        right=Side(border_style="thin", color="000000"),  # Define a borda direita
-        top=Side(border_style="thin", color="000000"),  # Define a borda superior
-        bottom=Side(border_style="thin", color="000000")  # Define a borda inferior
+    thin_border = Border(
+        left=Side(border_style="thin", color="000000"),
+        right=Side(border_style="thin", color="000000"),
+        top=Side(border_style="thin", color="000000"),
+        bottom=Side(border_style="thin", color="000000")
     )
     
-    for row in sheet.iter_rows():  # Itera sobre todas as linhas da planilha
-        for cell in row:  # Itera sobre todas as células da linha
-            cell.border = thin_border  # Aplica a borda fina a cada célula
+    for row in sheet.iter_rows():
+        for cell in row:
+            cell.border = thin_border
 
-# Função para renomear, formatar e adicionar a coluna 'AREA2' ao arquivo
+# Função para renomear, formatar e adicionar a coluna 'AREA2'
 def renomear_formatar_arquivo():
-    download_dir = os.path.join(os.path.expanduser('~'), 'Downloads')  # Define o diretório de downloads
-    arquivos = os.listdir(download_dir)  # Lista todos os arquivos no diretório de downloads
+    # Pasta de downloads (padrão)
+    download_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
+    arquivos = os.listdir(download_dir)
 
-    # Filtra os arquivos para pegar apenas os arquivos CSV
-    arquivos = [os.path.join(download_dir, f) for f in arquivos if f.endswith('.csv')]  
-    if arquivos:  # Verifica se há arquivos CSV na pasta
-        arquivo_recente = max(arquivos, key=os.path.getctime)  # Encontra o arquivo CSV mais recente
+    # Encontrar o arquivo mais recente
+    arquivos = [os.path.join(download_dir, f) for f in arquivos if f.endswith('.csv')]
+    if arquivos:
+        arquivo_recente = max(arquivos, key=os.path.getctime)
 
-        # Define o novo nome e caminho para salvar o arquivo Excel
-        data_atual = datetime.now().strftime("%d.%m")  # Obtém a data atual no formato 'dd.mm'
-        novo_nome = f"Planejado - {data_atual}.xlsx"  # Formata o nome do novo arquivo
-        destino = f"H:/Monitoramento_e_Avaliacao/Relatórios de Metas/Mensal/Planejado/{novo_nome}"  # Define o caminho de destino
+        # Caminho para salvar o arquivo Excel
+        data_atual = datetime.now().strftime("%d.%m")
+        novo_nome = f"Planejado - {data_atual}.xlsx"
+        destino = f"H:/Monitoramento_e_Avaliacao/Relatórios de Metas/Mensal/Planejado/{novo_nome}"
+        # Carregar o CSV em um DataFrame
+        df = pd.read_csv(arquivo_recente, delimiter=";")  # Ajuste o delimitador conforme necessário
 
-        # Carrega o arquivo CSV em um DataFrame
-        df = pd.read_csv(arquivo_recente, delimiter=";")  # Lê o arquivo CSV com ponto e vírgula como delimitador
-
-        # Cria a coluna 'AREA2' concatenando 'AREA' e 'ID'
+        # Criar a coluna 'AREA2'
         if 'AREA' in df.columns and 'ID' in df.columns:
-            df['AREA2'] = df['AREA'].astype(str) + '-' + df['ID'].astype(str)  # Cria a coluna 'AREA2' como string concatenada
-
-        # Converte a coluna 'Data_Hora' para o formato datetime, se existir
+            df['AREA2'] = df['AREA'].astype(str) + '-' + df['ID'].astype(str)
+        # Verificar e converter a coluna 'Data_Hora' para o tipo datetime
         if 'Data_Hora' in df.columns:
-            df['Data_Hora'] = pd.to_datetime(df['Data_Hora'], errors='coerce')  # Converte a coluna 'Data_Hora' para datetime
+            df['Data_Hora'] = pd.to_datetime(df['Data_Hora'], errors='coerce')
 
-            # Cria as colunas 'Data' e 'Hora' separadas
-            df['Data'] = df['Data_Hora'].dt.date  # Extrai a data
-            df['Hora'] = df['Data_Hora'].dt.time  # Extrai a hora
+            # Criar as colunas 'Data' e 'Hora' a partir da coluna 'Data_Hora'
+            df['Data'] = df['Data_Hora'].dt.date  # Mantém como datetime.date
+            df['Hora'] = df['Data_Hora'].dt.time
 
-            # Exclui a coluna original 'Data_Hora'
+            # Excluir a coluna original 'Data_Hora'
             df.drop(columns=['Data_Hora'], inplace=True)
 
-            # Reposiciona as colunas 'Data' e 'Hora'
+            # Reposicionar as colunas 'Data' e 'Hora'
             colunas = list(df.columns)
-            colunas.insert(6, colunas.pop(colunas.index('Data')))  # Move a coluna 'Data' para a posição 6
-            colunas.insert(7, colunas.pop(colunas.index('Hora')))  # Move a coluna 'Hora' para a posição 7
-            colunas.insert(2, colunas.pop(colunas.index('AREA')))  # Move a coluna 'AREA' para a posição 2
-            df = df[colunas]  # Reorganiza as colunas conforme as modificações
-
-        # Identifica o arquivo Excel mais recente na pasta de destino
+            colunas.insert(6, colunas.pop(colunas.index('Data')))
+            colunas.insert(7, colunas.pop(colunas.index('Hora')))
+            colunas.insert(2, colunas.pop(colunas.index('AREA')))
+            df = df[colunas]
+        # Identificar a segunda planilha mais recente na pasta de destino
         arquivos_excel = [os.path.join(os.path.dirname(destino), f) for f in os.listdir(os.path.dirname(destino)) if f.endswith('.xlsx')]
-        if len(arquivos_excel) > 1:  # Verifica se existem mais de um arquivo Excel na pasta
-            arquivos_excel.sort(key=os.path.getctime, reverse=True)  # Ordena os arquivos por data de criação
-            mais_recente = arquivos_excel[0]  # Seleciona o arquivo mais recente
-            df_antiga = pd.read_excel(mais_recente)  # Carrega o arquivo Excel mais recente
+        if len(arquivos_excel) > 1:
+            # Ordenar arquivos por data de criação e selecionar o mais recente
+            arquivos_excel.sort(key=os.path.getctime, reverse=True)
+            mais_recente = arquivos_excel[0]
+            df_antiga = pd.read_excel(mais_recente)
 
-            # Realiza a operação de PROC V para preencher a coluna 'STATUS2'
+            # Criar a coluna 'STATUS2' e realizar o PROC V
             if 'AREA2' in df_antiga.columns and 'STATUS2' in df_antiga.columns:
-                df_antiga['AREA2'] = df_antiga['AREA2'].astype(str)  # Garante que 'AREA2' esteja no formato correto
-                df['STATUS2'] = df['AREA2'].map(df_antiga.set_index('AREA2')['STATUS2']).fillna('#N/D')  # Mapeia 'STATUS2' a partir do arquivo antigo
-                df['STATUS2'] = df['STATUS2'].replace('0', '#N/D')  # Substitui valores '0' por '#N/D'
+                # Garantir que 'AREA2' está no tipo correto
+                df_antiga['AREA2'] = df_antiga['AREA2'].astype(str)
+                df['STATUS2'] = df['AREA2'].map(df_antiga.set_index('AREA2')['STATUS2']).fillna('#N/D')
+                print(f"Arquivo mais recente encontrado: {mais_recente}")
+            else:
+                print("Colunas 'AREA2' ou 'STATUS2' não encontradas em df_antiga.")
+                # Verificar colunas disponíveis em df_antiga
+                print(f"Arquivo mais recente encontrado: {mais_recente}")
+                print(f"Colunas disponíveis em df_antiga: {df_antiga.columns}")
+        # Substituir todas as células vazias por 'N/A'
+        df = df.fillna('N/A')
 
-        # Salva o DataFrame como um arquivo Excel
-        df.to_excel(destino, index=False)  # Salva o DataFrame como um arquivo Excel sem índice
-        print(f"Arquivo '{novo_nome}' gerado com sucesso!")  # Exibe uma mensagem de sucesso
+        # Salvar como Excel
+        df.to_excel(destino, index=False)
+        
+        # Aplicar formatação usando openpyxl
+        workbook = load_workbook(destino)
+        sheet = workbook.active
+        
+        # Formatar cabeçalho
+        font_bold = Font(bold=True)
+        fill_blue = PatternFill(start_color="ADD8E6", end_color="ADD8E6", fill_type="solid")
+
+        for cell in sheet[1]:
+            cell.font = font_bold
+            cell.fill = fill_blue
+        
+        # Adicionar bordas
+        adicionar_bordas(sheet)
+        
+        # Definir altura das linhas e largura das colunas
+        for row in sheet.iter_rows():
+            sheet.row_dimensions[row[0].row].height = 20
+
+        # Ajustar largura de todas as colunas para 30
+        for col in sheet.columns:
+            column = col[0].column_letter  # Coluna atual
+            sheet.column_dimensions[column].width = 30
+        
+        # Salvar o arquivo formatado
+        workbook.save(destino)
+        workbook.close()
+        
+        print(f"Arquivo renomeado, formatado e movido para: {destino}")
     else:
-        print("Nenhum arquivo CSV encontrado na pasta de downloads.")  # Mensagem caso não haja arquivos CSV
+        print("Nenhum arquivo CSV encontrado na pasta de Downloads.")
 
 # Função principal
-def main():
-    driver = configurar_driver()  # Configura o driver do navegador
-    realizar_login(driver, config.USERNAME, config.PASSWORD)  # Realiza o login usando credenciais do arquivo de configurações
-    navegar_painel(driver, config.USERNAME, config.PASSWORD)  # Navega até o painel após o login
-    renomear_formatar_arquivo()  # Renomeia e formata o arquivo após a execução
-    driver.quit()  # Encerra a sessão do navegador
+def tarefa():
+    driver = configurar_driver()
+    realizar_login(driver, config.USERNAME, config.PASSWORD)
+    navegar_painel(driver, config.USERNAME, config.PASSWORD)
+    time.sleep(5)
+    driver.quit()
+    renomear_formatar_arquivo()
 
-if __name__ == "__main__":  # Verifica se o script está sendo executado diretamente
-    main()  # Executa a função principal
+if __name__ == "__main__":
+    tarefa()
